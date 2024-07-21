@@ -1,3 +1,3 @@
 export default {
-  base: '/traffic-map-on-maplibre-gl-js/'
-}
+    base: '/japan-sea-level-rise-map-on-maplibre-gl-js/',
+};

@@ -45,7 +45,7 @@ map.addControl(
     new maplibregl.AttributionControl({
         compact: true,
         customAttribution:
-            '（<a href="https://twitter.com/shi__works" target="_blank">Twitter</a> | <a href="https://github.com/shi-works/japan-sea-level-rise-map-on-maplibre-gl-js" target="_blank">Github</a>） ',
+            '（<a href="https://twitter.com/shi__works" target="_blank">Twitter</a> | <a href="https://github.com/shiwaku/japan-sea-level-rise-map-on-maplibre-gl-js" target="_blank">Github</a>） ',
     })
 );
 
