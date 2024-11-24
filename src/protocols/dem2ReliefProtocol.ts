@@ -6,6 +6,7 @@
 // @ts-nocheck
 import { addProtocol } from 'maplibre-gl';
 import { getCalculateHeightFunction } from './protocolUtils';
+import { decode, encode } from 'fast-png';
 
 function dem2ReliefProtocol(
     protocol,
@@ -20,38 +21,37 @@ function dem2ReliefProtocol(
         const response = await fetch(imageUrl, { signal: abortController.signal });
 
         if (response.status === 200) {
-            const blob = await response.blob();
-            const imageBitmap = await createImageBitmap(blob);
+            const buffer = await response.arrayBuffer(); // ArrayBufferとして取得
+            const decodedImage = decode(new Uint8Array(buffer)); // fast-pngで画像をデコード
+            const { width, height, data } = decodedImage; // 画像情報を取得
 
-            const canvas = new OffscreenCanvas(imageBitmap.width, imageBitmap.height);
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(imageBitmap, 0, 0);
-
-            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-
-            for (let i = 0; i < imageData.data.length; i += 4) {
-                const r = imageData.data[i];
-                const g = imageData.data[i + 1];
-                const b = imageData.data[i + 2];
+            // デコードしたピクセルデータを直接操作
+            for (let i = 0; i < data.length; i += 4) {
+                const r = data[i];
+                const g = data[i + 1];
+                const b = data[i + 2];
 
                 let h = calculateHeight(r, g, b);
 
                 // 標高がスライダーの値以下なら青色、それ以上は透明に設定
                 if (h <= maxElevation) {
-                    imageData.data[i] = 0; // Red
-                    imageData.data[i + 1] = 0; // Green
-                    imageData.data[i + 2] = 255; // Blue
-                    imageData.data[i + 3] = 255; // Alpha (完全不透明)
+                    data[i] = 0; // Red
+                    data[i + 1] = 0; // Green
+                    data[i + 2] = 255; // Blue
+                    data[i + 3] = 255; // Alpha (完全不透明)
                 } else {
-                    imageData.data[i + 3] = 0; // Alpha (完全透明)
+                    data[i + 3] = 0; // Alpha (完全透明)
                 }
             }
 
-            ctx.putImageData(imageData, 0, 0);
-
-            return canvas.convertToBlob().then(async (blob) => {
-                return { data: await blob.arrayBuffer() };
+            // fast-pngのencode関数でPNGデータにエンコード
+            const pngData = encode({
+                width: width,
+                height: height,
+                data: data,
             });
+
+            return { data: pngData.buffer }; // エンコードしたデータを返す
         } else {
             return { data: null };
         }
