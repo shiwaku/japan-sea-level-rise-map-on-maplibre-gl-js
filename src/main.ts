@@ -63,7 +63,7 @@ map.on('load', () => {
         type: 'raster-dem',
         minzoom: 1,
         maxzoom: 18,
-        tiles: ['https://xs489works.xsrv.jp/raster-tiles/gsi/gsi-dem-terrain-rgb/{z}/{x}/{y}.png'],
+        tiles: ['https://shi-works.com/raster-tiles/gsi/gsi-dem-terrain-rgb/{z}/{x}/{y}.png'],
         tileSize: 256,
         attribution:
             "<a href='https://maps.gsi.go.jp/development/ichiran.html#dem' target='_blank'>地理院タイル(標高タイル)</a>",
@@ -99,7 +99,7 @@ map.on('load', () => {
     map.addSource('gsi-terrain-raster', {
         type: 'raster',
         tiles: [
-            'custom-relief://https://xs489works.xsrv.jp/raster-tiles/gsi/gsi-dem-terrain-rgb/{z}/{x}/{y}.png',
+            'custom-relief://https://shi-works.com/raster-tiles/gsi/gsi-dem-terrain-rgb/{z}/{x}/{y}.png',
         ],
         tileSize: 256,
         attribution:
@@ -152,14 +152,14 @@ function updateMapVisualization(elevation: number): void {
     const source = map.getSource('gsi-terrain-raster') as maplibregl.RasterTileSource | undefined;
     if (source) {
         source.setTiles([
-            `custom-relief://https://xs489works.xsrv.jp/raster-tiles/gsi/gsi-dem-terrain-rgb/{z}/{x}/{y}.png?elevation=${elevation}`,
+            `custom-relief://https://shi-works.com/raster-tiles/gsi/gsi-dem-terrain-rgb/{z}/{x}/{y}.png?elevation=${elevation}`,
         ]);
     } else {
         // ソースが存在しない場合は作成
         map.addSource('gsi-terrain-raster', {
             type: 'raster',
             tiles: [
-                `custom-relief://https://xs489works.xsrv.jp/raster-tiles/gsi/gsi-dem-terrain-rgb/{z}/{x}/{y}.png?elevation=${elevation}`,
+                `custom-relief://https://shi-works.com/raster-tiles/gsi/gsi-dem-terrain-rgb/{z}/{x}/{y}.png?elevation=${elevation}`,
             ],
             tileSize: 256,
             attribution:
